@@ -18,7 +18,7 @@ jobs:
           java-version: '17'
           cache: maven
       - name: Build with Maven
-        run: mvn -B clean package
+        run: mvn -q -Dstyle.color=never clean package
       - name: Generate checksums
         run: sha256sum target/MAGGuilds-Incognito-4.0.25.jar > target/MAGGuilds-Incognito-4.0.25.jar.sha256
       - name: Upload artifact
