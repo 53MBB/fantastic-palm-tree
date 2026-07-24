@@ -7,6 +7,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,15 +22,30 @@ jobs:
           java-version: '17'
           cache: maven
       - name: Build with Maven
+        id: maven
         shell: bash
         run: |
           set +e
           mvn -q -Dstyle.color=never clean package > build.log 2>&1
           code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           if [ $code -ne 0 ]; then
-            tail -n 100 build.log
-            exit $code
+            tail -n 80 build.log
           fi
+          exit 0
+      - name: Publish build error
+        if: steps.maven.outputs.exit_code != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          {
+            echo '```text'
+            tail -n 80 build.log
+            echo '```'
+          } > issue-body.md
+          gh issue create --title "MAGGuilds Incognito build error ${{ github.sha }}" --body-file issue-body.md
+          exit 1
       - name: Generate checksums
         run: sha256sum target/MAGGuilds-Incognito-4.0.25.jar > target/MAGGuilds-Incognito-4.0.25.jar.sha256
       - name: Upload artifact
