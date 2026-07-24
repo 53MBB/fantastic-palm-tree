@@ -1,0 +1,25 @@
+prefix: "&#7C3AED&lMAG&#F8FAFC&lHUB &#4C1D95»"
+no-permission: "%prefix% &#FB7185Nie masz uprawnien."
+only-player: "%prefix% &#FB7185Ta komenda jest tylko dla gracza."
+enabled: "%prefix% &#86EFACIncognito zostalo wlaczone."
+disabled: "%prefix% &#FB7185Incognito zostalo wylaczone."
+protocol-error: "%prefix% &#FB7185Nie udalo sie odswiezyc skina przez ProtocolLib."
+gui:
+  enable-name: "&#86EFAC&lWLACZ INCOGNITO"
+  enable-lore:
+    - "&#C4B5FDUkrywa tag gildii, nick nad glowa"
+    - "&#C4B5FDi podmienia skin gracza."
+    - ""
+    - "&#F8FAFCKliknij, aby wlaczyc."
+  disable-name: "&#FB7185&lWYLACZ INCOGNITO"
+  disable-lore:
+    - "&#C4B5FDPrzywraca prawdziwy nick,"
+    - "&#C4B5FDtag gildii i skin."
+    - ""
+    - "&#F8FAFCKliknij, aby wylaczyc."
+  status-enabled: "&#86EFAC&lSTATUS: WLACZONE"
+  status-disabled: "&#FB7185&lSTATUS: WYLACZONE"
+  status-lore:
+    - "&#C4B5FDAnonimowy nick: &#F8FAFC%anonymous%"
+    - "&#C4B5FDPrawdziwy nick: &#F8FAFC%player%"
+    - "&#C4B5FDCzat pozostaje bez zmian."
