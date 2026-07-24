@@ -1,0 +1,20 @@
+name: MAGGuilds-Incognito
+version: 4.0.25
+main: pl.maghub.incognito.MAGGuildsIncognitoPlugin
+api-version: '1.18'
+author: MAGHUB
+description: GUI incognito dla MAGGuilds
+softdepend: [MAGGuilds]
+depend: [ProtocolLib]
+commands:
+  incognito:
+    description: Otwiera GUI incognito
+    usage: /incognito
+    aliases: [incog]
+permissions:
+  magguilds.incognito:
+    default: true
+  magguilds.incognito.admin:
+    default: op
+  magguilds.incognito.see-real-name:
+    default: op
