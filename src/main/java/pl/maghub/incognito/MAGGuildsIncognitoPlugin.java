@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -55,15 +54,13 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
     private final Map<String, String> previousTeams = new ConcurrentHashMap<>();
     private File dataFile;
     private YamlConfiguration data;
-    private File messagesFile;
     private YamlConfiguration messages;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         saveResource("messages.yml", false);
-        messagesFile = new File(getDataFolder(), "messages.yml");
-        messages = YamlConfiguration.loadConfiguration(messagesFile);
+        messages = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "messages.yml"));
         dataFile = new File(getDataFolder(), "incognito.yml");
         data = YamlConfiguration.loadConfiguration(dataFile);
         loadStates();
@@ -121,8 +118,7 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        removeVisuals(player, false);
+        removeVisuals(event.getPlayer(), false);
     }
 
     @EventHandler
@@ -171,10 +167,9 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
 
     private void activateVisuals(Player player) {
         removeVisuals(player, false);
-        World world = player.getWorld();
         String anonymous = getConfig().getString("incognito.anonymous-name", "Anonimowy");
-        ArmorStand normal = spawnLabel(world, player.getLocation(), anonymous);
-        ArmorStand admin = spawnLabel(world, player.getLocation(), anonymous + " (" + player.getName() + ")");
+        ArmorStand normal = spawnLabel(player.getWorld(), player.getLocation(), anonymous);
+        ArmorStand admin = spawnLabel(player.getWorld(), player.getLocation(), anonymous + " (" + player.getName() + ")");
         labels.put(player.getUniqueId(), new NamePair(normal, admin));
         for (Player viewer : Bukkit.getOnlinePlayers()) applyViewerState(viewer, player);
         refreshSkin(player);
@@ -268,11 +263,9 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
     }
 
     private void installProtocolListener() {
-        List<PacketType> types = new ArrayList<>();
-        if (PacketType.Play.Server.PLAYER_INFO.isSupported()) types.add(PacketType.Play.Server.PLAYER_INFO);
-        if (PacketType.Play.Server.PLAYER_INFO_UPDATE.isSupported()) types.add(PacketType.Play.Server.PLAYER_INFO_UPDATE);
-        if (types.isEmpty()) return;
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, types) {
+        PacketType type = PacketType.Play.Server.PLAYER_INFO;
+        if (!type.isSupported()) return;
+        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.NORMAL, type) {
             @Override
             public void onPacketSending(PacketEvent event) {
                 if (!getConfig().getBoolean("incognito.change-skin", true)) return;
@@ -309,7 +302,10 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
 
     private void loadStates() {
         for (String raw : data.getStringList("enabled")) {
-            try { enabled.add(UUID.fromString(raw)); } catch (IllegalArgumentException ignored) { }
+            try {
+                enabled.add(UUID.fromString(raw));
+            } catch (IllegalArgumentException ignored) {
+            }
         }
     }
 
@@ -317,7 +313,11 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
         if (!getConfig().getBoolean("incognito.save-state", true)) return;
         List<String> values = enabled.stream().map(UUID::toString).toList();
         data.set("enabled", values);
-        try { data.save(dataFile); } catch (IOException ex) { getLogger().warning("Nie mozna zapisac incognito.yml: " + ex.getMessage()); }
+        try {
+            data.save(dataFile);
+        } catch (IOException ex) {
+            getLogger().warning("Nie mozna zapisac incognito.yml: " + ex.getMessage());
+        }
     }
 
     private ItemStack item(Material material, String name, List<String> lore) {
@@ -360,5 +360,6 @@ public final class MAGGuildsIncognitoPlugin extends JavaPlugin implements Listen
         return ChatColor.translateAlternateColorCodes('&', buffer.toString());
     }
 
-    private record NamePair(ArmorStand normal, ArmorStand admin) { }
+    private record NamePair(ArmorStand normal, ArmorStand admin) {
+    }
 }
