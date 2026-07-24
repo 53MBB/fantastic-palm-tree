@@ -1,0 +1,18 @@
+incognito:
+  anonymous-name: "Anonimowy"
+  save-state: true
+  affect-chat: false
+  hide-guild-tag: true
+  change-skin: true
+  update-interval-ticks: 5
+  name-height: 2.25
+  skin:
+    texture: ""
+    signature: ""
+
+gui:
+  title: "&#7C3AED&lɪɴᴄᴏɢɴɪᴛᴏ"
+  rows: 3
+  enabled-slot: 11
+  status-slot: 13
+  disabled-slot: 15
