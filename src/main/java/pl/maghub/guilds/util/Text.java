@@ -2,7 +2,9 @@ package pl.maghub.guilds.util;
 
 import net.md_5.bungee.api.ChatColor;
 
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,43 +25,103 @@ public final class Text {
         return ChatColor.translateAlternateColorCodes('&', buffer.toString());
     }
 
-    public static String smallCapsPreservingTokens(String input) {
-        if (input == null || input.isEmpty()) return input;
-        StringBuilder out = new StringBuilder(input.length() + 16);
+    /**
+     * Formatuje szablon w prawidlowej kolejnosci:
+     * 1. tekst staly otrzymuje smallcaps,
+     * 2. placeholder jest rozpoznawany bez wzgledu na wielkosc liter,
+     * 3. obsluguje rowniez stare placeholdery zapisane smallcapsem,
+     * 4. wartosc placeholdera jest wstawiana bez konwersji smallcaps.
+     */
+    public static String formatTemplate(String input, Map<String, ?> replacements) {
+        if (input == null || input.isEmpty()) return input == null ? "" : input;
+
+        Map<String, String> normalized = new LinkedHashMap<>();
+        if (replacements != null) {
+            for (Map.Entry<String, ?> entry : replacements.entrySet()) {
+                String key = canonicalToken(entry.getKey());
+                normalized.put(key, String.valueOf(entry.getValue()));
+            }
+        }
+
+        StringBuilder output = new StringBuilder(input.length() + 32);
+        StringBuilder constant = new StringBuilder();
+
         for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-            if (c == '%') {
+            char character = input.charAt(i);
+
+            if (character == '%') {
                 int end = input.indexOf('%', i + 1);
                 if (end > i) {
-                    out.append(input, i, end + 1);
+                    appendSmallCaps(output, constant);
+                    String originalToken = input.substring(i + 1, end);
+                    String key = canonicalToken(originalToken);
+                    String replacement = normalized.get(key);
+                    if (replacement != null) {
+                        output.append(replacement);
+                    } else {
+                        output.append('%').append(originalToken).append('%');
+                    }
                     i = end;
                     continue;
                 }
             }
-            if (c == '&') {
+
+            if (character == '&') {
+                appendSmallCaps(output, constant);
                 if (i + 7 < input.length() && input.charAt(i + 1) == '#') {
-                    out.append(input, i, i + 8);
+                    output.append(input, i, i + 8);
                     i += 7;
-                    continue;
+                } else if (i + 1 < input.length()) {
+                    output.append(character).append(input.charAt(++i));
+                } else {
+                    output.append(character);
                 }
-                if (i + 1 < input.length()) {
-                    out.append(c).append(input.charAt(++i));
-                    continue;
-                }
-            }
-            if (c == '§' && i + 1 < input.length()) {
-                out.append(c).append(input.charAt(++i));
                 continue;
             }
-            out.append(small(c));
+
+            if (character == '§' && i + 1 < input.length()) {
+                appendSmallCaps(output, constant);
+                output.append(character).append(input.charAt(++i));
+                continue;
+            }
+
+            constant.append(character);
         }
-        return out.toString();
+
+        appendSmallCaps(output, constant);
+        return output.toString();
+    }
+
+    public static String smallCapsPreservingTokens(String input) {
+        return formatTemplate(input, Map.of());
+    }
+
+    private static void appendSmallCaps(StringBuilder output, StringBuilder constant) {
+        for (int i = 0; i < constant.length(); i++) output.append(small(constant.charAt(i)));
+        constant.setLength(0);
+    }
+
+    private static String canonicalToken(String token) {
+        if (token == null) return "";
+        StringBuilder result = new StringBuilder(token.length());
+        for (int i = 0; i < token.length(); i++) {
+            char c = Character.toLowerCase(token.charAt(i));
+            result.append(switch (c) {
+                case 'ᴀ' -> 'a'; case 'ʙ' -> 'b'; case 'ᴄ' -> 'c'; case 'ᴅ' -> 'd';
+                case 'ᴇ' -> 'e'; case 'ꜰ' -> 'f'; case 'ɢ' -> 'g'; case 'ʜ' -> 'h';
+                case 'ɪ' -> 'i'; case 'ᴊ' -> 'j'; case 'ᴋ' -> 'k'; case 'ʟ' -> 'l';
+                case 'ᴍ' -> 'm'; case 'ɴ' -> 'n'; case 'ᴏ' -> 'o'; case 'ᴘ' -> 'p';
+                case 'ʀ' -> 'r'; case 'ꜱ' -> 's'; case 'ᴛ' -> 't'; case 'ᴜ' -> 'u';
+                case 'ᴠ' -> 'v'; case 'ᴡ' -> 'w'; case 'ʏ' -> 'y'; case 'ᴢ' -> 'z';
+                default -> c;
+            });
+        }
+        return result.toString().replace("%", "").trim().toLowerCase(Locale.ROOT);
     }
 
     private static String small(char c) {
-        boolean upper = Character.isUpperCase(c);
         char lower = Character.toLowerCase(c);
-        String mapped = switch (lower) {
+        return switch (lower) {
             case 'a' -> "ᴀ"; case 'b' -> "ʙ"; case 'c' -> "ᴄ"; case 'd' -> "ᴅ";
             case 'e' -> "ᴇ"; case 'f' -> "ꜰ"; case 'g' -> "ɢ"; case 'h' -> "ʜ";
             case 'i' -> "ɪ"; case 'j' -> "ᴊ"; case 'k' -> "ᴋ"; case 'l' -> "ʟ";
@@ -68,7 +130,6 @@ public final class Text {
             case 'u' -> "ᴜ"; case 'v' -> "ᴠ"; case 'w' -> "ᴡ"; case 'x' -> "x";
             case 'y' -> "ʏ"; case 'z' -> "ᴢ"; default -> String.valueOf(c);
         };
-        return upper ? mapped : mapped;
     }
 
     public static String plainMaterial(String enumName) {
