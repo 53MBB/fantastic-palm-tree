@@ -6,7 +6,7 @@
 
     <groupId>pl.maghub</groupId>
     <artifactId>MAGGuilds</artifactId>
-    <version>4.0.26</version>
+    <version>4.0.28</version>
     <name>MAGGuilds</name>
     <description>Modularny system gildii MAGHUB dla Paper/Spigot 1.18.2-1.21.x</description>
 
@@ -42,7 +42,7 @@
     </dependencies>
 
     <build>
-        <finalName>MAGGuilds-4.0.26</finalName>
+        <finalName>MAGGuilds-4.0.28</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -62,7 +62,7 @@
                     <archive>
                         <manifestEntries>
                             <Implementation-Title>MAGGuilds</Implementation-Title>
-                            <Implementation-Version>4.0.26</Implementation-Version>
+                            <Implementation-Version>4.0.28</Implementation-Version>
                         </manifestEntries>
                     </archive>
                 </configuration>
