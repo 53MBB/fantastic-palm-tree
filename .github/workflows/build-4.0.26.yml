@@ -16,14 +16,28 @@ jobs:
           java-version: '17'
           cache: maven
       - name: Build
-        run: mvn -B clean package
+        id: maven
+        shell: bash
+        run: |
+          set -o pipefail
+          mvn -B clean package 2>&1 | tee build.log
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAGGuilds-4.0.26-build-log
+          path: build.log
       - name: Package source
+        if: success()
         run: zip -r MAGGuilds-4.0.26-source.zip pom.xml README.md src
       - name: Checksums
+        if: success()
         run: |
           sha256sum target/MAGGuilds-4.0.26.jar > target/MAGGuilds-4.0.26.jar.sha256
           sha256sum MAGGuilds-4.0.26-source.zip > MAGGuilds-4.0.26-source.zip.sha256
-      - uses: actions/upload-artifact@v4
+      - name: Upload release artifact
+        if: success()
+        uses: actions/upload-artifact@v4
         with:
           name: MAGGuilds-4.0.26
           path: |
