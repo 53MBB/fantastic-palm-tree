@@ -1,18 +1,166 @@
-incognito:
-  anonymous-name: "Anonimowy"
-  save-state: true
-  affect-chat: false
-  hide-guild-tag: true
-  change-skin: true
-  update-interval-ticks: 5
-  name-height: 2.25
-  skin:
-    texture: ""
-    signature: ""
+settings:
+  autosave-seconds: 300
+  invite-seconds: 60
+  teleport-seconds: 5
+  default-radius: 30
+  max-radius: 150
+  default-member-limit: 12
+  default-lives: 3
+  heart-y: 30
+  minimum-guild-distance: 100
+  expiration-days: 14
 
-gui:
-  title: "&#7C3AED&lɪɴᴄᴏɢɴɪᴛᴏ"
-  rows: 3
-  enabled-slot: 11
-  status-slot: 13
-  disabled-slot: 15
+creation:
+  items:
+    EMERALD_BLOCK: 16
+    DIAMOND_BLOCK: 8
+    GOLD_BLOCK: 16
+
+ranking:
+  start-points: 1000
+  base-kill-points: 25
+  minimum-kill-points: 5
+  maximum-kill-points: 50
+  same-guild-penalty: 25
+  anti-farm-seconds: 300
+
+anti-logout:
+  enabled: true
+  combat-seconds: 30
+  bypass-permission-enabled: false
+  actionbar-enabled: true
+  actionbar-format: "&#FB7185&lᴀɴᴛʏʟᴏɢᴏᴜᴛ &#F8FAFC%time%s"
+  broadcast-enabled: true
+  force-death-on-rejoin: true
+
+territory:
+  fluid-levels:
+    low-max-y: -40
+    middle-max-y: 50
+  explosion-requires-war: true
+  protect-heart: true
+
+wars:
+  enabled: true
+  duration-minutes: 120
+  declare-cooldown-hours: 24
+  guardian-enabled: false
+
+regeneration:
+  enabled: true
+  blocks-per-tick: 4
+  maximum-saved-blocks-per-guild: 200000
+  autosave-seconds: 10
+  cost:
+    material: EMERALD_BLOCK
+    material-display: "Blok szmaragdu"
+    blocks-per-item: 16
+    minimum: 1
+  bossbar:
+    color: PURPLE
+    style: SEGMENTED_10
+    title: "&#8B5CF6&lʀᴇɢᴇɴᴇʀᴀᴄᴊᴀ &#F8FAFC[%tag%] &#4C1D95• &#D946EF%percent%% &#4C1D95• &#C4B5FDᴘᴏᴢᴏꜱᴛᴀʟᴏ: &#F8FAFC%remaining% &#4C1D95• &#C4B5FDᴄᴢᴀꜱ: &#F8FAFC%time%"
+
+roles:
+  maximum: 12
+  default-role: czlonek
+  defaults:
+    rekrut:
+      name: Rekrut
+      permissions: [BREAK_BLOCKS, PLACE_BLOCKS, STORAGE_DEPOSIT]
+    czlonek:
+      name: Czlonek
+      permissions: [BREAK_BLOCKS, PLACE_BLOCKS, BREAK_GRAVITY, STORAGE_DEPOSIT, INVITE]
+    zaufany:
+      name: Zaufany
+      permissions: [BREAK_BLOCKS, PLACE_BLOCKS, BREAK_GRAVITY, PLACE_REDSTONE_TNT, FLUID_LOW, FLUID_MIDDLE, FLUID_HIGH, STORAGE_DEPOSIT, STORAGE_WITHDRAW, INVITE, SET_HOME]
+    mistrz:
+      name: Mistrz
+      permissions: [BREAK_BLOCKS, PLACE_BLOCKS, BREAK_GRAVITY, PLACE_REDSTONE_TNT, FLUID_LOW, FLUID_MIDDLE, FLUID_HIGH, TOGGLE_PVP, STORAGE_DEPOSIT, STORAGE_WITHDRAW, INVITE, KICK, SET_HOME, START_REGEN, MANAGE_ROLES, DECLARE_WAR]
+
+upgrades:
+  radius:
+    levels: [30, 50, 70, 100, 125, 150]
+    emerald-block-costs: [0, 64, 128, 256, 384, 512]
+  members:
+    levels: [12, 16, 20, 25, 30]
+    emerald-block-costs: [0, 32, 64, 128, 256]
+
+achievements:
+  enabled: true
+  auto-claim: false
+  categories:
+    kills:
+      name: "Zabojstwa"
+      material: DIAMOND_SWORD
+      thresholds: [25, 100, 250, 500, 1000, 2500, 5000, 10000, 25000]
+    points:
+      name: "Zdobyte punkty"
+      material: NETHER_STAR
+      thresholds: [500, 2000, 5000, 10000, 25000, 50000, 100000, 250000, 500000]
+    blocks:
+      name: "Wykopane bloki"
+      material: DIAMOND_PICKAXE
+      thresholds: [10000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000, 10000000]
+    koxy:
+      name: "Zjedzone koxy"
+      material: ENCHANTED_GOLDEN_APPLE
+      thresholds: [10, 50, 100, 250, 500, 1000, 2500, 5000, 10000]
+    refy:
+      name: "Zjedzone refy"
+      material: GOLDEN_APPLE
+      thresholds: [100, 500, 1000, 2500, 5000, 10000, 25000, 50000, 100000]
+    pearls:
+      name: "Rzucone perly"
+      material: ENDER_PEARL
+      thresholds: [250, 1000, 2500, 5000, 10000, 25000, 50000, 100000, 250000]
+    cases:
+      name: "Otwarte Case"
+      material: CHEST
+      thresholds: [50, 250, 500, 1000, 2500, 5000, 10000, 25000, 50000]
+    distance:
+      name: "Przebyty dystans"
+      material: COMPASS
+      thresholds: [10000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000, 10000000]
+    playtime:
+      name: "Czas gry gildii"
+      material: CLOCK
+      thresholds: [600, 3000, 6000, 18000, 36000, 72000, 144000, 288000, 576000]
+  rewards:
+    '1':
+      description: "2x Case i 100 punktow gildii"
+      commands: ["case give %player% 2"]
+      guild-points: 100
+    '2':
+      description: "4x Case i 250 punktow gildii"
+      commands: ["case give %player% 4"]
+      guild-points: 250
+    '3':
+      description: "8x Case i 500 punktow gildii"
+      commands: ["case give %player% 8"]
+      guild-points: 500
+    '4':
+      description: "Ranga VIP na 7 dni"
+      commands: ["lp user %player% parent addtemp vip 7d"]
+      guild-points: 750
+    '5':
+      description: "Ranga SVIP na 7 dni"
+      commands: ["lp user %player% parent addtemp svip 7d"]
+      guild-points: 1000
+    '6':
+      description: "Ranga ELITA na 7 dni"
+      commands: ["lp user %player% parent addtemp elita 7d"]
+      guild-points: 2000
+    '7':
+      description: "16x Case i 3500 punktow gildii"
+      commands: ["case give %player% 16"]
+      guild-points: 3500
+    '8':
+      description: "Ranga MAG na 7 dni"
+      commands: ["lp user %player% parent addtemp mag 7d"]
+      guild-points: 5000
+    '9':
+      description: "25x Case, 10000 punktow i dodatkowe zycie"
+      commands: ["case give %player% 25"]
+      guild-points: 10000
+      guild-lives: 1
