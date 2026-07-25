@@ -18,6 +18,10 @@ Czysty, napisany od nowa plugin gildii dla Paper/Spigot 1.18.2-1.21.x.
 - PlaceholderAPI,
 - wszystkie dane w YAML.
 
+## Formatowanie 4.0.26
+
+Smallcaps obejmuje tylko staly tekst. Placeholdery `%amount%`, `%material%`, `%time%`, `%blocks%`, `%percent%`, `%remaining%`, `%restored%` i `%tag%` sa podstawiane po formatowaniu i pozostaja zwykla czcionka.
+
 ## Build
 
 ```bash
