@@ -3,6 +3,8 @@ name: Build MAGGuilds 4.0.26
 on:
   push:
     branches: [magguilds-4.0.26-rewrite]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 jobs:
