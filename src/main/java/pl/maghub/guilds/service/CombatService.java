@@ -10,8 +10,10 @@ import pl.maghub.guilds.model.Guild;
 import pl.maghub.guilds.util.Text;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public final class CombatService {
@@ -24,6 +26,7 @@ public final class CombatService {
     private final AchievementService achievements;
     private final HashMap<UUID, Tag> tags = new HashMap<>();
     private final HashMap<String, Long> recentKills = new HashMap<>();
+    private final Set<UUID> automaticRespawns = new HashSet<>();
 
     public CombatService(
             MAGGuildsPlugin plugin,
@@ -197,9 +200,23 @@ public final class CombatService {
                 "points", gain,
                 "killer", killer.getName(),
                 "total", victimProfile.points());
+        showKillTitle(killer, gain);
 
         guilds.save();
         dataStore.saveProfiles();
+    }
+
+    private void showKillTitle(Player killer, int points) {
+        if (!plugin.getConfig().getBoolean("ranking.kill-title.enabled", true)) return;
+        String title = plugin.getConfig().getString("ranking.kill-title.title", "&#D946EF&lZABILES GRACZA");
+        String subtitle = plugin.getConfig().getString("ranking.kill-title.subtitle", "&#22C55E+%points%");
+        title = Text.color(Text.smallCapsPreservingTokens(title == null ? "" : title));
+        subtitle = Text.color(Text.smallCapsPreservingTokens(subtitle == null ? "" : subtitle)
+                .replace("%points%", String.valueOf(points)));
+        int fadeIn = Math.max(0, plugin.getConfig().getInt("ranking.kill-title.fade-in-ticks", 10));
+        int stay = Math.max(1, plugin.getConfig().getInt("ranking.kill-title.stay-ticks", 40));
+        int fadeOut = Math.max(0, plugin.getConfig().getInt("ranking.kill-title.fade-out-ticks", 10));
+        killer.sendTitle(title, subtitle, fadeIn, stay, fadeOut);
     }
 
     public void onQuit(Player victim) {
@@ -228,6 +245,9 @@ public final class CombatService {
         if (profile.pendingCombatDeath()
                 && plugin.getConfig().getBoolean("anti-logout.force-death-on-rejoin", true)) {
             profile.pendingCombatDeath(false);
+            if (plugin.getConfig().getBoolean("anti-logout.automatic-respawn", true)) {
+                automaticRespawns.add(player.getUniqueId());
+            }
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
                 if (player.isOnline() && !player.isDead()) player.setHealth(0.0D);
                 messages.send(player, "combat-respawn");
@@ -236,8 +256,17 @@ public final class CombatService {
         dataStore.saveProfiles();
     }
 
+    public boolean consumeAutomaticRespawn(UUID uuid) {
+        return automaticRespawns.remove(uuid);
+    }
+
+    public long automaticRespawnDelay() {
+        return Math.max(1L, plugin.getConfig().getLong("anti-logout.respawn-delay-ticks", 5L));
+    }
+
     public void shutdown() {
         tags.clear();
         recentKills.clear();
+        automaticRespawns.clear();
     }
 }
