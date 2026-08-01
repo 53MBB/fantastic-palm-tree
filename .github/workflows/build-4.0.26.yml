@@ -1,0 +1,49 @@
+name: Build MAGGuilds 4.0.26
+on:
+  push:
+    branches: [magguilds-4.0.26]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Build
+        id: maven
+        shell: bash
+        run: |
+          set -o pipefail
+          mvn -B clean package 2>&1 | tee build.log
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAGGuilds-4.0.26-build-log
+          path: build.log
+      - name: Package source
+        if: success()
+        run: zip -r MAGGuilds-4.0.26-source.zip pom.xml README.md src
+      - name: Checksums
+        if: success()
+        run: |
+          sha256sum target/MAGGuilds-4.0.26.jar > target/MAGGuilds-4.0.26.jar.sha256
+          sha256sum MAGGuilds-4.0.26-source.zip > MAGGuilds-4.0.26-source.zip.sha256
+      - name: Upload release artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: MAGGuilds-4.0.26
+          path: |
+            target/MAGGuilds-4.0.26.jar
+            target/MAGGuilds-4.0.26.jar.sha256
+            MAGGuilds-4.0.26-source.zip
+            MAGGuilds-4.0.26-source.zip.sha256
+            src/main/resources/config.yml
+            src/main/resources/messages.yml

@@ -1,20 +1,26 @@
-name: MAGGuilds-Incognito
-version: 4.0.25
-main: pl.maghub.incognito.MAGGuildsIncognitoPlugin
+name: MAGGuilds
+version: 4.0.28
+main: pl.maghub.guilds.MAGGuildsPlugin
 api-version: '1.18'
 author: MAGHUB
-description: GUI incognito dla MAGGuilds
-softdepend: [MAGGuilds]
-depend: [ProtocolLib]
+website: https://maghub.eu
+softdepend: [PlaceholderAPI, MAGHUB-Core, MAGHUB-DROP]
+
 commands:
-  incognito:
-    description: Otwiera GUI incognito
-    usage: /incognito
-    aliases: [incog]
+  g:
+    description: Glowna komenda gildii
+    usage: /g
+    aliases: [gildia, guild]
+  ga:
+    description: Administracja MAGGuilds
+    usage: /ga
+
 permissions:
-  magguilds.incognito:
-    default: true
-  magguilds.incognito.admin:
+  magguilds.admin:
     default: op
-  magguilds.incognito.see-real-name:
+  magguilds.create:
+    default: true
+  magguilds.antylogout.bypass:
+    default: false
+  magguilds.regeneration.bypass-cost:
     default: op
